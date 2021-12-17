@@ -86,7 +86,8 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             $caption = new TextMessageBuilder("ini stiker buat kamu " . $profile['displayName']);
 
             // gabungkan semua pesan
-            $multiMessageBuilder->add($sticker, $caption);
+            $multiMessageBuilder->add($sticker);
+            $multiMessageBuilder->add($caption);
 
             // kirim
             $result = $bot->replyMessage($replyToken, $multiMessageBuilder);
