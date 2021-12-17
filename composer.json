@@ -1,0 +1,18 @@
+{
+    "name": "dicoding/implementasi-bot-php",
+    "description": "Simple line bot using php slim framework",
+    "type": "project",
+    "require": {
+        "php": "^8.0",
+        "slim/slim": "^4.9",
+        "linecorp/line-bot-sdk": "^7.3",
+        "slim/psr7": "^1.5",
+        "nyholm/psr7": "^1.4",
+        "nyholm/psr7-server": "^1.0",
+        "guzzlehttp/psr7": "^2.1",
+        "http-interop/http-factory-guzzle": "^1.2",
+        "laminas/laminas-diactoros": "^2.8"
+    },
+    "license": "n",
+    "minimum-stability": "stable"
+}
