@@ -66,7 +66,6 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           // inisiasi 
           $replyToken = $event['replyToken'];
           $pesanMasuk = strtolower($event['message']['text']);
-          $profile = $bot->getProfile($event['source']['userId']);
           $mintaStiker = [
             'bagi stiker dong',
             'punya stiker keren gak',
@@ -74,7 +73,6 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           ];
 
           if (in_array($pesanMasuk, $mintaStiker)) {
-            $multiMessageBuilder = new MultiMessageBuilder;
             $packageId = 1070;
             $stickerId = [17861, 17860, 17854, 17847, 17844];
 
@@ -82,17 +80,10 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             $stickerId = $stickerId[rand(0, count($stickerId))];
             $sticker = new StickerMessageBuilder($packageId, $stickerId);
 
-            // generate pesan caption
-            $caption = new TextMessageBuilder("ini stiker buat kamu " . $profile['displayName']);
-
-            // gabungkan semua pesan
-            $multiMessageBuilder->add($sticker);
-            $multiMessageBuilder->add($caption);
-
             // kirim
-            $result = $bot->replyMessage($replyToken, $multiMessageBuilder);
+            $result = $bot->replyMessage($replyToken, $sticker);
           } else {
-            $result = $bot->replyText($replyToken, "maaf " . $profile['displayName'] . " kami tidak mengerti kamu ngomong apa 😭");
+            $result = $bot->replyText($replyToken, "maaf kami gak ngerti kamu ngomong apa 😭");
           }
           $response
             ->getBody()
