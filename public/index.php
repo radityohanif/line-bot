@@ -2,7 +2,7 @@
 
 /**
  * Kita akan membuat inisialisasi LINE bot dan SLIM App. Selanjutnya buat route untuk URL Webhook ke public/webhook dengan method POST. Setiap request yang masuk akan dicek terlebih dahulu oleh header content X-Line-Signature apakah valid atau tidak. Kemudian jika lolos validasi signature ini, kode implementasi fitur-fitur Messaging API nantinya akan berjalan.
- 
+
  * Catatan: Bila hendak mencoba simulasi request, misalnya melalui aplikasi Postman, Anda dapat atur variabel $pass_signature = true; untuk melewati proses pengecekan signature.
  */
 
@@ -60,5 +60,4 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
   // Kode aplikasi nanti disini..
 
 });
-
 $app->run();
