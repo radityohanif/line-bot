@@ -63,30 +63,36 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
     foreach ($data['events'] as $event) {
       if ($event['type'] == 'message') {
         if ($event['message']['type'] == 'text') {
-
           // inisiasi 
           $replyToken = $event['replyToken'];
-          $pesanMasuk = $event['message']['text'];
-
-          // proses
-          $pesanMasuk = strtolower($pesanMasuk);    // ubah pesan masuk menjadi huruf kecil
+          $pesanMasuk = strtolower($event['message']['text']);
+          $profile = $bot->getProfile($event['source']['userId']);
           $mintaStiker = [
             'bagi stiker dong',
             'punya stiker keren gak',
             'stiker',
           ];
+
           if (in_array($pesanMasuk, $mintaStiker)) {
+            $multiMessageBuilder = new MultiMessageBuilder;
             $packageId = 1070;
             $stickerId = [17861, 17860, 17854, 17847, 17844];
+
             // generate stiker random
             $stickerId = $stickerId[rand(0, count($stickerId))];
+            $sticker = new StickerMessageBuilder($packageId, $stickerId);
 
-            // kirim stiker
-            $stickerMessageBuilder = new StickerMessageBuilder($packageId, $stickerId);
-            $result = $bot->replyMessage($replyToken, $stickerMessageBuilder);
+            // generate pesan caption
+            $caption = new TextMessageBuilder("ini stiker buat kamu " . $profile['displayName']);
+
+            // gabungkan semua pesan
+            $multiMessageBuilder->add($sticker, $caption);
+
+            // kirim
+            $result = $bot->replyMessage($replyToken, $multiMessageBuilder);
+          } else {
+            $result = $bot->replyText($replyToken, "maaf " . $profile['displayName'] . " kami tidak mengerti kamu ngomong apa 😭");
           }
-
-          // kirim respon
           $response
             ->getBody()
             ->write(json_encode($result->getJSONDecodedBody()));
@@ -95,6 +101,16 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($result->getHTTPStatus());
         }
+      }
+      if ($event['type'] == 'follow') {
+        $profile = $bot->getProfile($event['source']['userId']);
+        $textMessageBuilder = new TextMessageBuilder('Terimakasih sudah mengikuti kami ' . $profile['displayName']);
+        $result = $bot->pushMessage($profile['userId'], $textMessageBuilder);
+
+        $response->getBody()->write("Pesan push berhasil dikirim!");
+        return $response
+          ->withHeader('Content-Type', 'application/json')
+          ->withStatus($result->getHTTPStatus());
       }
     }
   }
