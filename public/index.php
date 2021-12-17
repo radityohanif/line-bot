@@ -63,16 +63,34 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
     foreach ($data['events'] as $event) {
       if ($event['type'] == 'message') {
         if ($event['message']['type'] == 'text') {
-          // send same message as reply to user
-          $result = $bot->replyText($event['replyToken'], $event['message']['text']);
 
+          // inisiasi 
+          $replyToken = $event['replyToken'];
+          $pesanMasuk = $event['message']['text'];
 
-          // or we can use replyMessage() instead to send reply message
-          // $textMessageBuilder = new TextMessageBuilder($event['message']['text']);
-          // $result = $bot->replyMessage($event['replyToken'], $textMessageBuilder);
+          // proses
+          $pesanMasuk = strtolower($pesanMasuk);    // ubah pesan masuk menjadi huruf kecil
+          $mintaStiker = [
+            'bagi stiker dong',
+            'punya stiker keren gak',
+            'stiker',
+          ];
+          if (in_array($pesanMasuk, $mintaStiker)) {
+            $packageId = 1070;
+            $stickerId = [17861, 17860, 17854, 17847, 17844];
+            // generate stiker random
+            $stickerId = $stickerId[rand(0, count($stickerId))];
 
+            // kirim stiker
+            $stickerMessageBuilder = new StickerMessageBuilder($packageId, $stickerId);
+            $result = $bot->replyMessage($replyToken, $stickerMessageBuilder);
+          }
 
-          $response->getBody()->write(json_encode($result->getJSONDecodedBody()));
+          // kirim respon
+          $response
+            ->getBody()
+            ->write(json_encode($result->getJSONDecodedBody()));
+
           return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($result->getHTTPStatus());
