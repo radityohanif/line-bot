@@ -6,7 +6,7 @@
  * Catatan: Bila hendak mencoba simulasi request, misalnya melalui aplikasi Postman, Anda dapat atur variabel $pass_signature = true; untuk melewati proses pengecekan signature.
  */
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\RequestInterface as Request;
