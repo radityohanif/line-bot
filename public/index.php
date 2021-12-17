@@ -72,6 +72,14 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             'aku mau stiker',
             'bagi stiker dong'
           ];
+          $terimaKasih = [
+            'terima kasih',
+            'makasih ya',
+            'makasih loh ini',
+            'tq',
+            'thank you'
+          ];
+
 
           if (in_array($pesanMasuk, $mintaStiker)) {
             $packageId = 1070;
@@ -91,9 +99,14 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
 
             // kirim
             $result = $bot->replyMessage($replyToken, $pesan);
+          }
+          if (in_array($pesanMasuk, $terimaKasih)) {
+            $result = $bot->replyText($replyToken, "Sama-sama 😊\nchat aku lagi ya kalo lagi bosen");
           } else {
             $result = $bot->replyText($replyToken, "maaf kami gak ngerti kamu ngomong apa 😭");
           }
+
+
           $response
             ->getBody()
             ->write(json_encode($result->getJSONDecodedBody()));
