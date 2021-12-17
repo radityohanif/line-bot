@@ -103,16 +103,6 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             ->withStatus($result->getHTTPStatus());
         }
       }
-      if ($event['type'] == 'follow') {
-        $profile = $bot->getProfile($event['source']['userId']);
-        $textMessageBuilder = new TextMessageBuilder('Terimakasih sudah mengikuti kami ' . $profile['displayName']);
-        $result = $bot->pushMessage($profile['userId'], $textMessageBuilder);
-
-        $response->getBody()->write("Pesan push berhasil dikirim!");
-        return $response
-          ->withHeader('Content-Type', 'application/json')
-          ->withStatus($result->getHTTPStatus());
-      }
     }
   }
 });
