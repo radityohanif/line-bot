@@ -73,6 +73,7 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             'bagi stiker dong'
           ];
           $terimaKasih = [
+            'makasih',
             'terima kasih',
             'makasih ya',
             'makasih loh ini',
