@@ -34,7 +34,6 @@ $app->get('/', function (Request $request, Response $response, $args) {
   return $response;
 });
 
-// buat root untuk webhook
 $app->post('/webhook', function (Request $request, Response $response) use ($channel_secret, $bot, $httpClient, $pass_signature) {
 
   // get request body and line signature header
@@ -63,9 +62,14 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
     foreach ($data['events'] as $event) {
       if ($event['type'] == 'message') {
         if ($event['message']['type'] == 'text') {
-          // inisiasi 
+
+          // inisiasi variabel yang dibutuhkan
           $replyToken = $event['replyToken'];
           $pesanMasuk = strtolower($event['message']['text']);
+          $salam = [
+            'halo',
+            'hai',
+          ];
           $mintaStiker = [
             'punya stiker keren gak',
             'stiker',
@@ -81,8 +85,13 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             'thank you'
           ];
 
+          // jika pesan masuk = salam
+          if (in_array($pesanMasuk, $salam)) {
+            $result = $bot->replyText($replyToken, "Iya, ada yang bisa aku bantu 😊");
+          }
 
-          if (in_array($pesanMasuk, $mintaStiker)) {
+          // jika pesan masuk = minta stiker
+          else if (in_array($pesanMasuk, $mintaStiker)) {
             $packageId = 1070;
             $stickerId = [17861, 17860, 17854, 17847, 17844];
 
@@ -101,12 +110,16 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             // kirim
             $result = $bot->replyMessage($replyToken, $pesan);
           }
-          if (in_array($pesanMasuk, $terimaKasih)) {
+
+          // jika pesan masuk = ungkapan terimakasih
+          else if (in_array($pesanMasuk, $terimaKasih)) {
             $result = $bot->replyText($replyToken, "Sama-sama 😊\nchat aku lagi ya kalo lagi bosen");
-          } else {
-            $result = $bot->replyText($replyToken, "maaf kami gak ngerti kamu ngomong apa 😭");
           }
 
+          // jika pesan masuk tidak dikenali
+          else {
+            $result = $bot->replyText($replyToken, "maaf kami gak ngerti kamu ngomong apa 😭");
+          }
 
           $response
             ->getBody()
@@ -120,4 +133,17 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
     }
   }
 });
+
+$app->get('/pushmessage', function ($req, $response) use ($bot) {
+  // send push message to user
+  $userId = 'Isi dengan user ID Anda';
+  $textMessageBuilder = new TextMessageBuilder('Halo, ini pesan push');
+  $result = $bot->pushMessage($userId, $textMessageBuilder);
+
+  $response->getBody()->write("Pesan push berhasil dikirim!");
+  return $response
+    ->withHeader('Content-Type', 'application/json')
+    ->withStatus($result->getHTTPStatus());
+});
+
 $app->run();
