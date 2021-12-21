@@ -75,7 +75,7 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           $salam = [
             'halo', 'hai',
             'selamat', 'pagi', 'siang', 'sore',
-            'central ai'
+            'central'
           ];
 
           $mintaStiker = [
