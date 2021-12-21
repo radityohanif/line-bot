@@ -65,11 +65,19 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
 
           // inisiasi variabel yang dibutuhkan
           $replyToken = $event['replyToken'];
+          $terjawab = false;
+
+          // pre processing
           $pesanMasuk = strtolower($event['message']['text']);
+          $pesanMasuk = explode(" ", $pesanMasuk);
+
+          // Kamus 
           $salam = [
-            'halo',
-            'hai',
+            'halo', 'hai',
+            'selamat', 'pagi', 'siang', 'sore',
+            'central ai'
           ];
+
           $mintaStiker = [
             'punya stiker keren gak',
             'stiker',
@@ -85,13 +93,17 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
             'thank you'
           ];
 
+
           // jika pesan masuk = salam
-          if (in_array($pesanMasuk, $salam)) {
-            $result = $bot->replyText($replyToken, "Iya, ada yang bisa aku bantu 😊");
+          foreach ($salam as $indikator) {
+            if (in_array($indikator, $pesanMasuk) && !$terjawab) {
+              $result = $bot->replyText($replyToken, "Iya, ada yang bisa aku bantu 😊");
+              $terjawab = true;
+            }
           }
 
           // jika pesan masuk = minta stiker
-          else if (in_array($pesanMasuk, $mintaStiker)) {
+          if (in_array($pesanMasuk, $mintaStiker)) {
             $packageId = 1070;
             $stickerId = [17861, 17860, 17854, 17847, 17844];
 
@@ -112,7 +124,7 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           }
 
           // jika pesan masuk = ungkapan terimakasih
-          else if (in_array($pesanMasuk, $terimaKasih)) {
+          if (in_array($pesanMasuk, $terimaKasih)) {
             $result = $bot->replyText($replyToken, "Sama-sama 😊\nchat aku lagi ya kalo lagi bosen");
           }
 
