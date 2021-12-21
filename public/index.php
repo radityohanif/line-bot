@@ -79,10 +79,7 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           ];
 
           $mintaStiker = [
-            'punya stiker keren gak',
-            'stiker',
-            'aku mau stiker',
-            'bagi stiker dong'
+            'stiker'
           ];
           $terimaKasih = [
             'makasih',
@@ -103,33 +100,40 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           }
 
           // jika pesan masuk = minta stiker
-          if (in_array($pesanMasuk, $mintaStiker)) {
-            $packageId = 1070;
-            $stickerId = [17861, 17860, 17854, 17847, 17844];
+          foreach ($mintaStiker as $indikator) {
+            if (in_array($indikator, $pesanMasuk) && !$terjawab) {
+              $packageId = 1070;
+              $stickerId = [17861, 17860, 17854, 17847, 17844];
 
-            // generate stiker random
-            $stickerId = $stickerId[rand(0, (count($stickerId) - 1))];
-            $sticker = new StickerMessageBuilder($packageId, $stickerId);
+              // generate stiker random
+              $stickerId = $stickerId[rand(0, (count($stickerId) - 1))];
+              $sticker = new StickerMessageBuilder($packageId, $stickerId);
 
-            // generate caption
-            $caption = new TextMessageBuilder('Ini Stiker buat kamu ❤');
+              // generate caption
+              $caption = new TextMessageBuilder('Ini Stiker buat kamu ❤');
 
-            // gabungkan pesan
-            $pesan = new MultiMessageBuilder();
-            $pesan->add($sticker);
-            $pesan->add($caption);
+              // gabungkan pesan
+              $pesan = new MultiMessageBuilder();
+              $pesan->add($sticker);
+              $pesan->add($caption);
 
-            // kirim
-            $result = $bot->replyMessage($replyToken, $pesan);
+              // kirim
+              $result = $bot->replyMessage($replyToken, $pesan);
+              $terjawab = true;
+            }
           }
 
           // jika pesan masuk = ungkapan terimakasih
-          if (in_array($pesanMasuk, $terimaKasih)) {
-            $result = $bot->replyText($replyToken, "Sama-sama 😊\nchat aku lagi ya kalo lagi bosen");
+          foreach ($terimaKasih as $indikator) {
+            if (in_array($indikator, $pesanMasuk) && !$terjawab) {
+              $result = $bot->replyText($replyToken, "Sama-sama 😊\nchat aku lagi ya kalo lagi bosen");
+              $terjawab = true;
+            }
           }
 
           // jika pesan masuk tidak dikenali
-          else {
+
+          if (!$terjawab) {
             $result = $bot->replyText($replyToken, "maaf kami gak ngerti kamu ngomong apa 😭");
           }
 
