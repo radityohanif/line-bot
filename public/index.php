@@ -95,7 +95,7 @@ $app->post('/webhook', function (Request $request, Response $response) use ($cha
           // jika pesan masuk = salam
           foreach ($salam as $indikator) {
             if (in_array($indikator, $pesanMasuk) && !$terjawab) {
-              $result = $bot->replyText($replyToken, "Iya, ada yang bisa aku banting 😊");
+              $result = $bot->replyText($replyToken, "Iya, ada yang bisa aku bantu 😊");
               $terjawab = true;
             }
           }
